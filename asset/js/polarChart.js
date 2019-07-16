@@ -1,144 +1,158 @@
-function average(data){
-    var sum = data.reduce(function(sum, value){
-        return sum + value;
-    }, 0);
-
-    var avg = sum / data.length;
-    return avg.toFixed(2);
-}
 $().ready(function () {
     $.ajax({
-        url: "http://localhost/metriks",
+        // "http://localhost/windrose"
+        url: "http://localhost/windrose",
         type: "GET",
-        success: function (data) {
-            var datas = {
-                labelPemda : [],
-                vaccss : [],
-                vdiscov : [],
-                vcont : [],
-                vrig : [],
-                vpres : [],
-                vdate : [],
-                vaccsurl : [],
-                vconturl : [],
-                vdformat : [],
-                vlicense : [],
-                vfilefor : [],
-                vcontEmail : [],
-                vopenfor : [],
-                vmachineread: [],
-                vopenlicense : []
-            };
-            var len = data.length;
-            for (var i = 0;i<len;i++){
-                // console.log(data[i].nama_pemda)
-                datas.labelPemda.push(data[i].nama_pemda)
-                datas.vaccss.push(parseFloat(data[i].access))
-                datas.vdiscov.push(parseFloat(data[i].discovery))
-                datas.vcont.push(parseFloat(data[i].contact))
-                datas.vrig.push(parseFloat(data[i].right))
-                datas.vpres.push(parseFloat(data[i].preservation))
-                datas.vdate.push(parseFloat(data[i].date))
-                datas.vaccsurl.push(parseFloat(data[i].accessurl))
-                datas.vconturl.push(parseFloat(data[i].contacturl))
-                datas.vdformat.push(parseFloat(data[i].dateformat))
-                datas.vlicense.push(parseFloat(data[i].license))
-                datas.vfilefor.push(parseFloat(data[i].fileformat))
-                datas.vcontEmail.push(parseFloat(data[i].contactemail))
-                datas.vopenfor.push(parseFloat(data[i].openformat))
-                datas.vmachineread.push(parseFloat(data[i].machineread))
-                datas.vopenlicense.push(parseFloat(data[i].openlicense))
-            }
-            // console.log(datas.vaccss);
-            var ctx = $("#polarchart");
+        async : false,
+            dataType : 'json',
+        success : function (data) {
 
-            var avacc = average(datas.vaccss);
-            var avdis = average(datas.vdiscov);
-            var avcont = average(datas.vcont);
-            var avrig = average(datas.vrig);
-            var avpres = average(datas.vpres);
-            var avdate = average(datas.vdate);
-            var avaccurl = average(datas.vaccsurl);
-            var avconturl = average(datas.vconturl);
-            var avdfor = average(datas.vdformat);
-            var avlicen = average(datas.vlicense);
-            var avfilefor = average(datas.vfilefor);
-            var avcontem = average(datas.vcontEmail);
-            var avopenfor = average(datas.vopenfor);
-            var avmachine = average(datas.vmachineread);
-            var avopenlic = average(datas.vopenlicense);
+            Highcharts.chart('polarchart',{
 
+                chart: {
+                    polar: true,
+                    type: 'column'
+                },
 
+                title: {
+                    text: 'Perbandingan nilai sub dimensi'
+                },
 
-            var d = [avacc,avdis,avcont,
-                avrig,avpres,avdate,
-                avaccurl, avconturl, avdfor,
-                avlicen, avfilefor, avcontem,
-                avopenfor, avmachine, avopenlic];
-            var l  = ["Access", "Discovery", "Contact", "Rigth",
-                 "Preservation", "Date", "Access URL", "Contact URL", "Date Format",
-                     "License", "File Format","Contact Email", "Open Format",
-                    "Machine Read", "Open License"]
-            console.log(l + " " + d);
-            var assessData = {
-                labels: l,
-                datasets: [{
-                    data: d ,
-                    backgroundColor: [
-                        "rgba(255, 0, 0, 0.5)",
-                        "rgba(100, 255, 0, 0.5)",
-                        "rgba(200, 50, 255, 0.5)",
-                        "rgba(0, 100, 255, 0.5)",
-                        "rgba(72,3,255,0.5)",
-                        "rgba(255,126,34,0.5)",
-                        "rgba(118,8,132,0.5)",
-                        "rgba(0,196,178,0.5)",
-                        "rgba(23,196,100,0.5)",
-                        "rgba(232,0,71,0.74)",
-                        "rgba(6,27,232,0.58)",
-                        "rgba(242,90,255,0.62)",
-                        "rgba(81,255,32,0.68)",
-                        "rgba(48,255,236,0.79)",
-                        "rgba(132,26,45,0.65)"
-                    ]
-                }]
-            };
-            var polarAreaChart = new Chart(ctx, {
-                type: 'polarArea',
-                data: assessData,
-                options: {
+                subtitle: {
+                    text: 'Nilai rata - rata setiap sub dimensi'
+                },
+
+                pane: {
+                    size: '90%'
+                },
+
+                legend: {
+                    reversed: true,
+                    align: 'right',
+                    verticalAlign: 'top',
+                    y: 100,
+                    layout: 'vertical'
+                },
+
+                xAxis: {
+                    type: "category",
+                    tickmarkPlacement: 'between',
+                },
+
+                yAxis: {
+                    min: 0,
+                    angle: 285,
+                    lineColor: "#330000",
+                    lineWidth: 0.5,
+                    endOnTick: false,
+                    showLastLabel: true,
                     title: {
-                        display: true,
-                        text: 'Perbandingan Nilai Setiap Sub dimensi',
-                        fontSize: 20
+                        text: 'Nilai'
                     },
-                    legend: {
-                        display: false
+                    labels: {
+                        formatter: function () {
+                            return this.value ;
+                        }
                     }
-                }
+                },
+
+                tooltip: {
+
+                    followPointer: true
+                },
+
+                plotOptions: {
+
+                    series: {
+                        shadow: false,
+                        groupPadding: 1,
+                        pointPlacement: 'on',
+                        zones:[{
+                            value:0,
+                            color:'#002db3'
+                        },{
+                            value:0.5,
+                            color:'#546bb3'
+                        },{
+                            value:0.87,
+                            color:'#39b3af'
+                        },{
+                            value:1,
+                            color:'#00ff55'
+                        }]
+                    }
+                },
+
+                series: [{
+                    "showInLegend": false,
+                    "name" : "nilai",
+                    "data" : data,
+                }]
             });
+
+            var narr = data.sort(function(a, b) {
+                return b[1] - a[1];
+            });
+            var cat = [];
+            var dat = [];
+            for (var i=0; i < narr.length;i++){
+                cat.push(narr[i][0]);
+                dat.push(narr[i][1])
+
+            }
+
+
+            var col = Highcharts.chart('colchart',{
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Nilai Rata - Rata Sub dimensi'
+                },
+                subtitle: {
+                    text: 'portal Open Data'
+                },
+                xAxis: {
+                    categories: cat,
+                    crosshair: true
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'skor'
+                    }
+                },
+                // tooltip: {
+                //     headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                //     pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                //         '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                //     footerFormat: '</table>',
+                //     shared: true,
+                //     useHTML: true
+                // },
+                plotOptions: {
+                    column: {
+                        dataLabels :{
+                            enabled : true
+                        },
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                },
+                series: [{
+                    showInLegend: false,
+                    name: 'Total',
+                    data: dat,
+
+
+                }]
+
+            })
         },
-        error: function (data) {
-            console.log("error");
+        error : function (data) {
+            console.log("err")
         }
+    }
 
-    })
+    )
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
